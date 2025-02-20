@@ -1,101 +1,203 @@
-import Image from "next/image";
+import React from "react";
+import DataTable from "../components/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+// Define TypeScript interfaces for the data
+interface PricingPlan {
+  plan: string;
+  "1 Line": string;
+  "2 Lines": string;
+  "3 Lines": string;
+  "4 Lines": string;
+  "5 Lines": string;
+}
+
+interface DeviceCost {
+  device: string;
+  ultimate: string;
+  plus: string;
+  welcome: string;
+}
+
+const pricingPlans: PricingPlan[] = [
+  {
+    plan: "Ultimate",
+    "1 Line": "$80",
+    "2 Lines": "$70",
+    "3 Lines": "$55",
+    "4 Lines": "$45",
+    "5 Lines": "NA",
+  },
+  {
+    plan: "Plus",
+    "1 Line": "$70",
+    "2 Lines": "$60",
+    "3 Lines": "$45",
+    "4 Lines": "$35",
+    "5 Lines": "NA",
+  },
+  {
+    plan: "Welcome",
+    "1 Line": "$50",
+    "2 Lines": "$42.50",
+    "3 Lines": "$28.34",
+    "4 Lines": "$25",
+    "5 Lines": "NA",
+  },
+];
+
+const byodPlans: PricingPlan[] = [
+  {
+    plan: "Ultimate",
+    "1 Line": "$65",
+    "2 Lines": "$55",
+    "3 Lines": "$40",
+    "4 Lines": "$30",
+    "5 Lines": "NA",
+  },
+  {
+    plan: "Plus",
+    "1 Line": "$60",
+    "2 Lines": "$50",
+    "3 Lines": "$35",
+    "4 Lines": "$25",
+    "5 Lines": "NA",
+  },
+  {
+    plan: "Welcome",
+    "1 Line": "$40",
+    "2 Lines": "$32.50",
+    "3 Lines": "$18.34",
+    "4 Lines": "$15",
+    "5 Lines": "NA",
+  },
+];
+
+const deviceCostsNoTradeIn: DeviceCost[] = [
+  { device: "iPhone 16", ultimate: "Free", plus: "Free", welcome: "$5/36M" },
+  { device: "16 Plus", ultimate: "Free", plus: "$5/36M", welcome: "$10/36M" },
+  {
+    device: "iPhone 16 Pro",
+    ultimate: "Free",
+    plus: "$5/36M",
+    welcome: "$10/36M",
+  },
+  {
+    device: "16 Pro Max",
+    ultimate: "$5/36M",
+    plus: "$10/36M",
+    welcome: "$15/36M",
+  },
+  { device: "iPhone 15", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "15 Plus", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "S25", ultimate: "Free", plus: "Free", welcome: "$5/36M" },
+  { device: "S25+", ultimate: "Free", plus: "$5/36M", welcome: "$10/36M" },
+  {
+    device: "S25 Ultra",
+    ultimate: "$5/36M",
+    plus: "$10/36M",
+    welcome: "$15/36M",
+  },
+  {
+    device: "Pixel 9 Pro",
+    ultimate: "Free",
+    plus: "$5/36M",
+    welcome: "$10/36M",
+  },
+  {
+    device: "Pixel 9 Pro XL",
+    ultimate: "$5/36M",
+    plus: "$10/36M",
+    welcome: "$15/36M",
+  },
+];
+
+const deviceCostsWithTradeIn: DeviceCost[] = [
+  { device: "iPhone 16", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "16 Plus", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "16 Pro", ultimate: "Free", plus: "Free", welcome: "Free" },
+  {
+    device: "16 Pro Max",
+    ultimate: "$6/36M",
+    plus: "$6/36M",
+    welcome: "$6/36M",
+  },
+  { device: "S25", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "S25+", ultimate: "Free", plus: "Free", welcome: "Free" },
+  {
+    device: "S25 Ultra",
+    ultimate: "$9/36M",
+    plus: "$9/36M",
+    welcome: "$9/36M",
+  },
+  { device: "Z Flip6", ultimate: "$7/36M", plus: "$7/36M", welcome: "$7/36M" },
+  {
+    device: "Z Fold6",
+    ultimate: "$29/36M",
+    plus: "$29/36M",
+    welcome: "$29/36M",
+  },
+  { device: "Pixel 9", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "9 Pro", ultimate: "Free", plus: "Free", welcome: "Free" },
+  { device: "9 Pro XL", ultimate: "$6/36M", plus: "$6/36M", welcome: "$6/36M" },
+  {
+    device: "9 Pro Fold",
+    ultimate: "$23/36M",
+    plus: "$23/36M",
+    welcome: "$23/36M",
+  },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const pricingColumns: ColumnDef<PricingPlan>[] = [
+    { header: "Plan", accessorKey: "plan" },
+    { header: "1 Line", accessorKey: "1 Line" },
+    { header: "2 Lines", accessorKey: "2 Lines" },
+    { header: "3 Lines", accessorKey: "3 Lines" },
+    { header: "4+ Lines", accessorKey: "4 Lines" },
+  ];
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const deviceColumns: ColumnDef<DeviceCost>[] = [
+    { header: "Device", accessorKey: "device" },
+    { header: "Ultimate", accessorKey: "ultimate" },
+    { header: "Plus", accessorKey: "plus" },
+    { header: "Welcome", accessorKey: "welcome" },
+  ];
+
+  return (
+    <div className="p-6">
+      <div className="flex item-center justify-between">
+        <h1 className="text-2xl font-bold mb-6">Verizon Pricing Plans</h1>
+        <Link href={"/add-phone"}>
+          <Button>Add New Phone</Button>
+        </Link>
+      </div>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">Pricing Plans</h2>
+        <DataTable columns={pricingColumns} data={pricingPlans} />
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">BYOD Plans</h2>
+        <DataTable columns={pricingColumns} data={byodPlans} />
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">
+          Device Costs (No Trade-In)
+        </h2>
+        <DataTable columns={deviceColumns} data={deviceCostsNoTradeIn} />
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">
+          Device Costs (With Trade-In)
+        </h2>
+        <DataTable columns={deviceColumns} data={deviceCostsWithTradeIn} />
+      </section>
     </div>
   );
 }
