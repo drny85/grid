@@ -28,6 +28,7 @@ export const fetchAndParseGoogleSheet = async (): Promise<{
       `https://docs.google.com/spreadsheets/d/${docId}/export?format=csv`
     );
     const text = response.data;
+    console.log("TEXT", text);
 
     // Split the content into rows
     const rows = text.split("\n").filter((row: string) => row.trim());
