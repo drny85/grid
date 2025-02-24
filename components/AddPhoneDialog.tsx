@@ -29,12 +29,15 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
-import { useStore } from "@/store/useStore";
+import { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 // ... other imports remain the same ...
 
 // Schema definition remains the same
 const phoneSchema = z.object({
   name: z.string().min(1, { message: "Device name is required" }),
+  price: z.string().min(3, { message: "Device name is required" }),
   ultimate: z.union([z.string(), z.literal("N/A")]),
   plus: z.union([z.string(), z.literal("N/A")]),
   welcome: z.union([z.string(), z.literal("N/A")]),
@@ -48,21 +51,23 @@ type AddPhoneDialogProps = {
   open: boolean;
   setOpen?: (open: boolean) => void;
   trigger?: React.ReactNode;
-  device: PhoneFormValues | null;
+  deviceId: Id<"device">;
 };
 
 const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
   onSubmit,
-  device,
+  deviceId,
   open,
   setOpen,
   trigger,
 }) => {
-  const current = useStore((s) => s.currentDevice);
+  const device = useQuery(api.devices.get, { id: deviceId });
+  const [calendarOpen, setCalendarOpen] = React.useState(false);
   const form = useForm<PhoneFormValues>({
     resolver: zodResolver(phoneSchema),
     defaultValues: {
       name: device?.name || "",
+      price: device?.value || "",
       ultimate: device?.ultimate || "N/A",
       plus: device?.plus || "N/A",
       welcome: device?.welcome || "N/A",
@@ -72,27 +77,38 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
   });
 
   const handleSubmit: SubmitHandler<PhoneFormValues> = (data) => {
-    onSubmit(data);
+    onSubmit({
+      ...data,
+    });
     form.reset();
     if (setOpen) setOpen(false);
   };
 
   useEffect(() => {
-    if (device) {
+    if (device && deviceId) {
       form.setValue("name", device.name);
       form.setValue("ultimate", device.ultimate);
       form.setValue("plus", device.plus);
       form.setValue("welcome", device.welcome);
       form.setValue("expires", device.expires);
     }
-  }, [device, form]);
+  }, [device, form, deviceId]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger || <Button variant="default">Add New Phone</Button>}
+        {trigger || (
+          <Button
+            onClick={() => {
+              console.log("open", open);
+            }}
+            variant="default"
+          >
+            Add New Phone
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" aria-describedby="">
         <DialogHeader>
           <DialogTitle>Add New Phone</DialogTitle>
         </DialogHeader>
@@ -128,6 +144,23 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
                   <FormControl>
                     <Input
                       placeholder="Enter device name"
+                      {...field}
+                      className="capitalize"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Device Retail Value</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="$999.99"
                       {...field}
                       className="capitalize"
                     />
@@ -211,11 +244,12 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Expiration Date</FormLabel>
-                  <Popover>
+                  <Popover open={calendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
+                          onClick={() => setCalendarOpen(true)}
                           className={cn(
                             "w-full pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
@@ -230,13 +264,13 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0" align="center">
                       <Calendar
                         mode="single"
                         selected={new Date(field.value)}
                         onSelect={(date) => {
-                          console.log(date);
                           field.onChange(format(date!, "MM-dd"));
+                          setCalendarOpen(false);
                         }}
                         // disabled={(date) =>
                         //   date < new Date() || date > new Date("2025-01-01")
@@ -252,7 +286,7 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
 
             {/* Submit Button */}
             <Button className="w-full my-2" type="submit">
-              {current ? "Update Phone" : "Add Phone"}
+              {deviceId ? "Update Phone" : "Add Phone"}
             </Button>
           </form>
         </Form>

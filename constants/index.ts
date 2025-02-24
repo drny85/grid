@@ -1,14 +1,6 @@
 import { PhoneFormValues } from "@/components/AddPhoneDialog";
+import { PricingPlan } from "@/typing";
 import { ColumnDef } from "@tanstack/react-table";
-
-interface PricingPlan {
-  plan: string;
-  "1 Line": string;
-  "2 Lines": string;
-  "3 Lines": string;
-  "4 Lines": string;
-  "5 Lines": string;
-}
 
 export const pricingColumns: ColumnDef<PricingPlan>[] = [
   { header: "Plan", accessorKey: "plan" },
@@ -25,6 +17,7 @@ export const deviceColumns: ColumnDef<PhoneFormValues>[] = [
   { header: "Welcome", accessorKey: "welcome" },
   { header: "Exp Date", accessorKey: "expires" },
   { header: "", accessorKey: "action" },
+  { header: "price", accessorKey: "price" },
 ];
 
 export const phoneRetailValue: number[] = [

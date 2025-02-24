@@ -1,20 +1,11 @@
 import { PhoneFormValues } from "@/components/AddPhoneDialog";
+
+import { PricingPlan } from "@/typing";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface PricingPlan {
-  plan: string;
-  "1 Line": string;
-  "2 Lines": string;
-  "3 Lines": string;
-  "4 Lines": string;
-  "5 Lines": string;
-}
-
 type DeviceCost = PhoneFormValues;
 interface PricingStore {
-  currentDevice: PhoneFormValues | null;
-  setCurrentDevice: (device: PhoneFormValues | null) => void;
   pricingPlans: PricingPlan[];
   byodPlans: PricingPlan[];
   deviceCostsNoTradeIn: PhoneFormValues[];
@@ -31,17 +22,36 @@ interface PricingStore {
 export const useStore = create<PricingStore>()(
   persist(
     (set) => ({
-      currentDevice: null,
-      setCurrentDevice: (device: PhoneFormValues | null) =>
-        set({ currentDevice: device }),
       pricingPlans: [
         {
           plan: "Ultimate",
+          "1 Line": "$90",
+          "2 Lines": "$80",
+          "3 Lines": "$65",
+          "4 Lines": "$55",
+        },
+        {
+          plan: "Plus",
           "1 Line": "$80",
           "2 Lines": "$70",
           "3 Lines": "$55",
           "4 Lines": "$45",
-          "5 Lines": "NA",
+        },
+        {
+          plan: "Welcome",
+          "1 Line": "$55",
+          "2 Lines": "$47.50",
+          "3 Lines": "$33.34",
+          "4 Lines": "$30",
+        },
+      ],
+      byodPlans: [
+        {
+          plan: "Ultimate",
+          "1 Line": "$75",
+          "2 Lines": "$65",
+          "3 Lines": "$50",
+          "4 Lines": "$40",
         },
         {
           plan: "Plus",
@@ -49,41 +59,13 @@ export const useStore = create<PricingStore>()(
           "2 Lines": "$60",
           "3 Lines": "$45",
           "4 Lines": "$35",
-          "5 Lines": "NA",
         },
         {
           plan: "Welcome",
-          "1 Line": "$50",
-          "2 Lines": "$42.50",
-          "3 Lines": "$28.34",
-          "4 Lines": "$25",
-          "5 Lines": "NA",
-        },
-      ],
-      byodPlans: [
-        {
-          plan: "Ultimate",
-          "1 Line": "$65",
-          "2 Lines": "$55",
-          "3 Lines": "$40",
-          "4 Lines": "$30",
-          "5 Lines": "NA",
-        },
-        {
-          plan: "Plus",
-          "1 Line": "$60",
-          "2 Lines": "$50",
-          "3 Lines": "$35",
-          "4 Lines": "$25",
-          "5 Lines": "NA",
-        },
-        {
-          plan: "Welcome",
-          "1 Line": "$40",
-          "2 Lines": "$32.50",
-          "3 Lines": "$18.34",
-          "4 Lines": "$15",
-          "5 Lines": "NA",
+          "1 Line": "$45",
+          "2 Lines": "$37.50",
+          "3 Lines": "$23.34",
+          "4 Lines": "$20",
         },
       ],
       deviceCostsNoTradeIn: [],
