@@ -53,7 +53,7 @@ export default function Home() {
 
   return (
     <div className="p-6">
-      <div className="flex item-center justify-between">
+      <div className="flex item-center justify-between gap-2">
         <h1 className="text-2xl font-bold mb-6">Verizon Pricing Plans</h1>
         <div className="hidden md:flex">
           <ModeToggle />
