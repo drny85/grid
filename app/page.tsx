@@ -55,7 +55,9 @@ export default function Home() {
     <div className="p-6">
       <div className="flex item-center justify-between">
         <h1 className="text-2xl font-bold mb-6">Verizon Pricing Plans</h1>
-        <ModeToggle />
+        <div className="hidden md:flex">
+          <ModeToggle />
+        </div>
         <AddPhoneDialog
           open={open}
           setOpen={(value) => {
