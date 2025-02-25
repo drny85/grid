@@ -1,11 +1,13 @@
 import { PhoneFormValues } from "@/components/AddPhoneDialog";
 
-import { PricingPlan } from "@/typing";
+import { PhoneValue, PricingPlan } from "@/typing";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type DeviceCost = PhoneFormValues;
 interface PricingStore {
+  device: PhoneValue | null;
+  setDevice: (device: PhoneValue | null) => void;
   pricingPlans: PricingPlan[];
   byodPlans: PricingPlan[];
   deviceCostsNoTradeIn: PhoneFormValues[];
@@ -22,6 +24,8 @@ interface PricingStore {
 export const useStore = create<PricingStore>()(
   persist(
     (set) => ({
+      device: null,
+      setDevice: (device: PhoneValue | null) => set({ device }),
       pricingPlans: [
         {
           plan: "Ultimate",

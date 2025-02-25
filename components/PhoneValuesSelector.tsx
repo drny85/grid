@@ -4,7 +4,7 @@ import { phoneRetailValue } from "@/constants";
 
 const PhoneValuesSelector = () => {
   return (
-    <SelectContent defaultValue={"N/A"}>
+    <SelectContent>
       <SelectItem value="N/A">N/A</SelectItem>
       <SelectItem value="$0">$0</SelectItem>
       {phoneRetailValue.map((value) => (

@@ -7,16 +7,16 @@ import { useState } from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
+import { PhoneValue } from "@/typing";
 // Define TypeScript interfaces for the data
 
 export default function Home() {
   const { pricingPlans, byodPlans } = useStore();
   const [open, setOpen] = useState(false);
+  const { device, setDevice } = useStore();
   const add = useMutation(api.devices.addDevice);
-  const devices = useQuery(api.devices.list);
-  const [currentDevice, setCurrentDevice] = useState<Id<"device">>();
+  const devices = useQuery(api.devices.list) as PhoneValue[] | [];
   const updateDevice = useMutation(api.devices.updateDevice);
   const deviceCostsWithTradeIn =
     devices?.filter((device) => device.withTradeIn) || [];
@@ -24,18 +24,28 @@ export default function Home() {
     devices?.filter((device) => !device.withTradeIn) || [];
 
   const onSubmit = async (data: PhoneFormValues) => {
-    if (currentDevice) {
+    if (device) {
       await updateDevice({
-        id: currentDevice,
+        id: device._id,
         data: {
           ...data,
         },
       });
-      setCurrentDevice(undefined);
+      setDevice(null);
       toast.success("Device updated successfully");
     } else {
+      if (
+        devices?.find(
+          (device) =>
+            device.name.toLowerCase() === data.name.toLowerCase() &&
+            device.withTradeIn === data.withTradeIn
+        )
+      ) {
+        toast.error("Device already exists");
+        return;
+      }
       add(data);
-      setCurrentDevice(undefined);
+      setDevice(null);
       setOpen(false);
       toast.success("Device added successfully");
     }
@@ -48,9 +58,8 @@ export default function Home() {
         <ModeToggle />
         <AddPhoneDialog
           open={open}
-          deviceId={currentDevice!}
           setOpen={(value) => {
-            setCurrentDevice(undefined);
+            setDevice(null);
             setOpen(value);
           }}
           onSubmit={onSubmit}
@@ -77,11 +86,11 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-3 pl-3">
           Device Costs (No Trade-In)
         </h2>
-        <DataTable
+        <DataTable<PhoneValue>
           columns={deviceColumns}
           data={deviceCostsNoTradeIn}
-          onEdit={(value) => {
-            setCurrentDevice(value._id);
+          onEdit={(value: PhoneValue) => {
+            setDevice(value);
             setOpen(true);
           }}
         />
@@ -91,11 +100,11 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-3 pl-3">
           Device Costs (With Trade-In)
         </h2>
-        <DataTable
+        <DataTable<PhoneValue>
           columns={deviceColumns}
           data={deviceCostsWithTradeIn}
-          onEdit={(value) => {
-            setCurrentDevice(value._id);
+          onEdit={(value: PhoneValue) => {
+            setDevice(value);
             console.log("value", value);
             setOpen(true);
           }}

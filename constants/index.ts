@@ -1,5 +1,4 @@
-import { PhoneFormValues } from "@/components/AddPhoneDialog";
-import { PricingPlan } from "@/typing";
+import { PhoneValue, PricingPlan } from "@/typing";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const pricingColumns: ColumnDef<PricingPlan>[] = [
@@ -10,14 +9,38 @@ export const pricingColumns: ColumnDef<PricingPlan>[] = [
   { header: "4+ Lines", accessorKey: "4 Lines" },
 ];
 
-export const deviceColumns: ColumnDef<PhoneFormValues>[] = [
-  { header: "Device Name", accessorKey: "name" },
-  { header: "Ultimate", accessorKey: "ultimate" },
-  { header: "Plus", accessorKey: "plus" },
-  { header: "Welcome", accessorKey: "welcome" },
-  { header: "Exp Date", accessorKey: "expires" },
-  { header: "", accessorKey: "action" },
-  { header: "price", accessorKey: "price" },
+export const deviceColumns: ColumnDef<PhoneValue>[] = [
+  {
+    accessorKey: "name",
+    header: "Device",
+    accessorFn: (row) => row.name || "N/A",
+  },
+  {
+    accessorKey: "ultimate",
+    header: "Ultimate",
+    accessorFn: (row) => row.ultimate || "N/A",
+  },
+  {
+    accessorKey: "plus",
+    header: "Plus",
+    accessorFn: (row) => row.plus || "N/A",
+  },
+  {
+    accessorKey: "welcome",
+    header: "Welcome",
+    accessorFn: (row) => row.welcome || "N/A",
+  },
+  {
+    accessorKey: "expires",
+    header: "Expires",
+    accessorFn: (row) => row.expires || "N/A",
+  },
+
+  {
+    id: "action",
+    header: "Action",
+    cell: () => null, // This will be handled by the DataTable component
+  },
 ];
 
 export const phoneRetailValue: number[] = [

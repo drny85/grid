@@ -1,9 +1,5 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,18 +16,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "./ui/input";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import PhoneValuesSelector from "./PhoneValuesSelector";
-import { Switch } from "./ui/switch";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/store/useStore";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import React, { useEffect } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import * as z from "zod";
+import PhoneValuesSelector from "./PhoneValuesSelector";
 import { Calendar } from "./ui/calendar";
-import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { Input } from "./ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Switch } from "./ui/switch";
 // ... other imports remain the same ...
 
 // Schema definition remains the same
@@ -51,23 +49,21 @@ type AddPhoneDialogProps = {
   open: boolean;
   setOpen?: (open: boolean) => void;
   trigger?: React.ReactNode;
-  deviceId: Id<"device">;
 };
 
 const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
   onSubmit,
-  deviceId,
   open,
   setOpen,
   trigger,
 }) => {
-  const device = useQuery(api.devices.get, { id: deviceId });
   const [calendarOpen, setCalendarOpen] = React.useState(false);
+  const device = useStore((s) => s.device);
   const form = useForm<PhoneFormValues>({
     resolver: zodResolver(phoneSchema),
     defaultValues: {
       name: device?.name || "",
-      price: device?.value || "",
+      price: device?.price || "",
       ultimate: device?.ultimate || "N/A",
       plus: device?.plus || "N/A",
       welcome: device?.welcome || "N/A",
@@ -85,14 +81,18 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
   };
 
   useEffect(() => {
-    if (device && deviceId) {
+    if (device) {
       form.setValue("name", device.name);
+      form.setValue("price", device.price);
       form.setValue("ultimate", device.ultimate);
       form.setValue("plus", device.plus);
       form.setValue("welcome", device.welcome);
       form.setValue("expires", device.expires);
+      form.setValue("withTradeIn", device.withTradeIn);
+    } else {
+      form.reset();
     }
-  }, [device, form, deviceId]);
+  }, [device, form]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -100,7 +100,9 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
         {trigger || (
           <Button
             onClick={() => {
-              console.log("open", open);
+              if (!open) {
+                form.reset();
+              }
             }}
             variant="default"
           >
@@ -286,7 +288,7 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
 
             {/* Submit Button */}
             <Button className="w-full my-2" type="submit">
-              {deviceId ? "Update Phone" : "Add Phone"}
+              {device ? "Update Phone" : "Add Phone"}
             </Button>
           </form>
         </Form>
