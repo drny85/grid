@@ -50,7 +50,7 @@ const DataTable = <TData,>({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={cn("px-6 py-3 text-white", {
+                  className={cn("px-6 py-3 text-white ", {
                     "text-left": header.column.id === "name",
                   })}
                 >
