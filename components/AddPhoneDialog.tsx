@@ -67,7 +67,7 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
       ultimate: device?.ultimate || "N/A",
       plus: device?.plus || "N/A",
       welcome: device?.welcome || "N/A",
-      expires: device?.expires || format(new Date(), "MM-dd"),
+      expires: device?.expires || format(new Date(), "MM-dd-yyyy"),
       withTradeIn: device?.withTradeIn || false,
     },
   });
@@ -257,11 +257,7 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? (
-                            format(new Date(field.value), "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
+                          {field.value ? field.value : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -271,7 +267,7 @@ const AddPhoneDialog: React.FC<AddPhoneDialogProps> = ({
                         mode="single"
                         selected={new Date(field.value)}
                         onSelect={(date) => {
-                          field.onChange(format(date!, "MM-dd"));
+                          field.onChange(format(date!, "MM-dd-yyyy"));
                           setCalendarOpen(false);
                         }}
                         // disabled={(date) =>
