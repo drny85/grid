@@ -69,9 +69,9 @@ export default function Home() {
       </div>
       <div className="flex gap-3 mb-2 items-center justify-center">
         <p className="text-md font-semibold italic">
-          Auto Pay & Unlimited Welcome Offer (1 - 3) lines
+          Auto Pay & National Growth Pricing Offer (NGPO)
         </p>{" "}
-        <span className="text-orange-500">Expire 03/31</span>
+        <span className="text-orange-500">Expire 04/02</span>
       </div>
 
       <section className="mb-8 shadow-lg rounded-xl overflow-hidden">
@@ -82,6 +82,9 @@ export default function Home() {
       <section className="mb-8 shadow-lg rounded-xl overflow-hidden">
         <h2 className="text-xl font-semibold mb-3 pl-3">BYOD Plans</h2>
         <DataTable columns={pricingColumns} data={byodPlans} />
+        <p className="text-center p-1 text-destructive">
+          *price may vary depending on number of lines or plan
+        </p>
       </section>
 
       <section className="mb-8 shadow-lg rounded-xl overflow-hidden">
