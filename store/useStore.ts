@@ -67,9 +67,9 @@ export const useStore = create<PricingStore>()(
         {
           plan: "Welcome",
           "1 Line": "$45",
-          "2 Lines": "$37.50*",
-          "3 Lines": "$23.34*",
-          "4 Lines": "$20*",
+          "2 Lines": "$42.50*",
+          "3 Lines": "$30*",
+          "4 Lines": "$22.50*",
         },
       ],
       deviceCostsNoTradeIn: [],
